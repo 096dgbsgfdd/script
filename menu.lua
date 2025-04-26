@@ -69,68 +69,84 @@ buttonCorner.Parent = noclipButton
 
 -- Functions for hacks (you can paste real code later)
 espButton.MouseButton1Click:Connect(function()
-	-- ESP Script for Roblox (with the Hack Menu intact)
-	local Players = game:GetService("Players")
-	local Camera = game:GetService("Workspace").CurrentCamera
-	local LocalPlayer = game.Players.LocalPlayer
+	-- Constantly Updating Name + Outline ESP (Fixed Full Working Version)
 
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer
 
-	-- Function to create ESP box around a player
-	local function createESP(player)
-		local espBox = Instance.new("Frame")
-		espBox.Size = UDim2.new(0, 200, 0, 50)
-		espBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-		espBox.BackgroundTransparency = 0.5
-		espBox.BorderSizePixel = 0
-		espBox.AnchorPoint = Vector2.new(0.5, 0.5)
-		espBox.Visible = true
-		espBox.Parent = menuGui:WaitForChild("HackMenu"):WaitForChild("ScreenGui")
+local function createNameESP(player)
+    local character = player.Character
+    if character and not character:FindFirstChild("ESPName") then
+        local head = character:FindFirstChild("Head")
+        if head then
+            local billboard = Instance.new("BillboardGui")
+            billboard.Name = "ESPName"
+            billboard.Adornee = head
+            billboard.ExtentsOffset = Vector3.new(0, 1, 0)
+            billboard.Size = UDim2.new(4, 0, 1, 0)
+            billboard.AlwaysOnTop = true
 
-		-- Create text label for the player's name
-		local textLabel = Instance.new("TextLabel")
-		textLabel.Size = UDim2.new(1, 0, 1, 0)
-		textLabel.BackgroundTransparency = 1
-		textLabel.Text = player.Name
-		textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-		textLabel.TextSize = 20
-		textLabel.Parent = espBox
+            local nameTag = Instance.new("TextLabel")
+            nameTag.Size = UDim2.new(1, 0, 1, 0)
+            nameTag.BackgroundTransparency = 1
+            nameTag.Text = player.Name
+            nameTag.TextColor3 = Color3.new(1, 0, 0) -- Red
+            nameTag.TextStrokeTransparency = 0
+            nameTag.TextStrokeColor3 = Color3.new(0, 0, 0) -- Black outline
+            nameTag.Font = Enum.Font.SourceSansBold
+            nameTag.TextScaled = true
+            nameTag.Parent = billboard
 
-		-- Update ESP box position to follow player
-		game:GetService("RunService").RenderStepped:Connect(function()
-			if player.Character and player.Character:FindFirstChild("Head") then
-				local playerPosition = player.Character.Head.Position
-				local screenPosition, onScreen = Camera:WorldToScreenPoint(playerPosition)
-				if onScreen then
-					espBox.Position = UDim2.new(0, screenPosition.X, 0, screenPosition.Y)
-				else
-					espBox.Position = UDim2.new(0, -1000, 0, -1000)  -- Move off-screen if the player is out of view
-				end
-			end
-		end)
+            billboard.Parent = character
+        end
+    end
+end
 
-		-- Update ESP box text to show distance
-		game:GetService("RunService").RenderStepped:Connect(function()
-			if player.Character and player.Character:FindFirstChild("Head") then
-				local playerPosition = player.Character.Head.Position
-				local distance = math.round((playerPosition - LocalPlayer.Character.HumanoidRootPart.Position).magnitude)
-				textLabel.Text = player.Name .. " - " .. distance .. "m"
-			end
-		end)
-	end
+local function createBoxESP(player)
+    local character = player.Character
+    if character and not character:FindFirstChild("ESPBox") then
+        -- Only create if HumanoidRootPart exists to avoid timing issues
+        local hrp = character:FindFirstChild("HumanoidRootPart")
+        if hrp then
+            local highlight = Instance.new("Highlight")
+            highlight.Name = "ESPBox"
+            highlight.Adornee = character
+            highlight.FillTransparency = 1
+            highlight.OutlineTransparency = 0
+            highlight.OutlineColor = Color3.new(1, 0, 0) -- Red outline
+            highlight.Parent = character
+        end
+    end
+end
 
-	-- Loop through all players and create ESP
-	Players.PlayerAdded:Connect(function(player)
-		if player ~= game.Players.LocalPlayer then
-			createESP(player)
-		end
-	end)
+-- This will properly reconnect on character respawn too
+local function setupPlayer(player)
+    player.CharacterAdded:Connect(function()
+        repeat task.wait() until player.Character and player.Character:FindFirstChild("Head") and player.Character:FindFirstChild("HumanoidRootPart")
+        createNameESP(player)
+        createBoxESP(player)
+    end)
 
-	-- Create ESP for existing players
-	for _, player in ipairs(Players:GetPlayers()) do
-		if player ~= game.Players.LocalPlayer then
-			createESP(player)
-		end
-	end
+    -- Also try to create immediately if possible
+    if player.Character then
+        createNameESP(player)
+        createBoxESP(player)
+    end
+end
+
+-- Main loop
+for _, player in ipairs(Players:GetPlayers()) do
+    if player ~= LocalPlayer then
+        setupPlayer(player)
+    end
+end
+
+Players.PlayerAdded:Connect(function(player)
+    if player ~= LocalPlayer then
+        setupPlayer(player)
+    end
+end)
 
 
 
