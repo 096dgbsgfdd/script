@@ -342,48 +342,44 @@ end)
 -- Assuming you have a button already created and named `invisButton`
 
 invisButton.MouseButton1Click:Connect(function()
+-- Assuming your button is named 'invisibleButton'
+local invisibleButton = script.Parent:WaitForChild("invisibleButton")
+
+-- Function to toggle visibility
+local function toggleInvisibility()
     local player = game.Players.LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
 
-    -- Function to make the character invisible
-    local function makeInvisible()
-        for _, part in pairs(character:GetChildren()) do
-            if part:IsA("BasePart") then
-                part.Transparency = 1  -- Set transparency to 100% (invisible)
-                part.CanCollide = false  -- Disable collisions
-                part.CastShadow = false  -- Disable shadows for the parts
-            end
-        end
-        print("Character is now invisible.")
-    end
-
-    -- Function to make the character visible again
-    local function makeVisible()
-        for _, part in pairs(character:GetChildren()) do
-            if part:IsA("BasePart") then
-                part.Transparency = 0  -- Set transparency back to visible (0%)
-                part.CanCollide = true  -- Enable collisions
-                part.CastShadow = true  -- Re-enable shadows
-            end
-        end
-        print("Character is now visible.")
-    end
-
-    -- Toggle invisibility
-    local isInvisible = false  -- Track invisibility state
+    local isInvisible = false
+    -- Check if any part is invisible
     for _, part in pairs(character:GetChildren()) do
-        if part:IsA("BasePart") and part.Transparency == 0 then
-            isInvisible = false
+        if part:IsA("BasePart") and part.Transparency == 1 then
+            isInvisible = true
             break
         end
     end
 
-    -- If the character is already invisible, make it visible again, otherwise make it invisible
-    if isInvisible then
-        makeVisible()
-    else
-        makeInvisible()
+    -- Make invisible or visible based on the current state
+    for _, part in pairs(character:GetChildren()) do
+        if part:IsA("BasePart") then
+            if isInvisible then
+                part.Transparency = 0 -- Make visible
+                part.CanCollide = true -- Enable collisions
+                part.CastShadow = true -- Enable shadows
+            else
+                part.Transparency = 1 -- Make invisible
+                part.CanCollide = false -- Disable collisions
+                part.CastShadow = false -- Disable shadows
+            end
+        end
     end
+end
+
+-- Button click event
+invisButton.MouseButton1Click:Connect(function()
+    toggleInvisibility()
+end)
+
 end)
 
 
