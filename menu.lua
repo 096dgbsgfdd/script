@@ -69,7 +69,7 @@ buttonCorner.Parent = noclipButton
 -- No fog button
 local noFogButton = Instance.new("TextButton")
 noFogButton.Size = UDim2.new(1, 0, 0, 25)
-noFogButton.Position = UDim2.new(0, 0, 0, 100)
+noFogButton.Position = UDim2.new(0, 0, 0, 120)
 noFogButton.Text = "No fog"
 noFogButton.Parent = menuFrame
 noFogButton.BackgroundColor3=Color3.fromRGB(40,40,40)
@@ -77,6 +77,17 @@ noFogButton.TextColor3 = Color3.fromRGB(0, 255, 0)
 local buttonCorner =Instance.new("UICorner")
 buttonCorner.CornerRadius = UDim.new(0, 10)
 buttonCorner.Parent = noFogButton
+
+local invisibleButton = Instance.new("TextButton")
+invisibleButton.Size = UDim2.new(1, 0, 0, 25)
+invisibleButton.Position = UDim2.new(0, 0, 0, 120)
+invisibleButton.Text = "invisible"
+invisibleButton.Parent = menuFrame
+invisibleButton.BackgroundColor3=Color3.fromRGB(40,40,40)
+invisibleButton.TextColor3 = Color3.fromRGB(0, 255, 0)
+local buttonCorner =Instance.new("UICorner")
+buttonCorner.CornerRadius = UDim.new(0, 10)
+buttonCorner.Parent = invisibleButton
 
 -- Functions for hacks (you can paste real code later)
 espButton.MouseButton1Click:Connect(function()
@@ -318,12 +329,76 @@ end)
 
 end)
 nofogButton.MouseButton1Click:Connect(function()
-	print("NoClip Activated!")
+	
 	
 local Lighting = game:GetService("Lighting")
 
 -- Remove basic fog
 Lighting.FogEnd = 1000000
 Lighting.FogStart = 0
+end)
+
+invisibleButton.MouseButton1Click:Connect(function()
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+local UserInputService = game:GetService("UserInputService")
+
+-- Define the custom key to toggle invisibility
+local toggleKey = Enum.KeyCode.M  -- Change this to the key you prefer
+
+-- Function to make the character invisible
+local function makeInvisible()
+    for _, part in pairs(character:GetChildren()) do
+        if part:IsA("BasePart") then  -- Make sure it's a physical part of the character
+            part.Transparency = 1  -- Set transparency to 100% (invisible)
+            part.CanCollide = false  -- Disable collisions
+            part.CastShadow = false  -- Disable shadows for the parts
+        end
+    end
+    print("Character is now invisible.")
+end
+
+-- Function to make the character visible again
+local function makeVisible()
+    for _, part in pairs(character:GetChildren()) do
+        if part:IsA("BasePart") then
+            part.Transparency = 0  -- Set transparency back to visible (0%)
+            part.CanCollide = true  -- Enable collisions
+            part.CastShadow = true  -- Re-enable shadows
+        end
+    end
+    print("Character is now visible.")
+end
+
+-- Check for key press and toggle invisibility
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+    if gameProcessed then return end  -- Ignore if the game has already processed the input
+
+    if input.KeyCode == toggleKey then
+        -- Toggle between invisible and visible
+        if character and character:FindFirstChild("Humanoid") then
+            local isInvisible = true
+            for _, part in pairs(character:GetChildren()) do
+                if part:IsA("BasePart") and part.Transparency == 0 then
+                    isInvisible = false
+                    break
+                end
+            end
+            if isInvisible then
+                makeVisible()
+            else
+                makeInvisible()
+            end
+        end
+    end
+end)
+
+-- Reset character and humanoid references if the player respawns
+player.CharacterAdded:Connect(function(newCharacter)
+    character = newCharacter
+    humanoid = character:WaitForChild("Humanoid")
+end)
+
 end)
 
