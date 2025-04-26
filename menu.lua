@@ -376,7 +376,7 @@ local function toggleInvisibility()
 end
 
 -- Button click event
-invisButton.MouseButton1Click:Connect(function()
+invisibleButton.MouseButton1Click:Connect(function()
     toggleInvisibility()
 end)
 
