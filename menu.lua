@@ -66,6 +66,17 @@ noclipButton.TextColor3 = Color3.fromRGB(0, 255, 0)
 local buttonCorner =Instance.new("UICorner")
 buttonCorner.CornerRadius = UDim.new(0, 10)
 buttonCorner.Parent = noclipButton
+-- No fog button
+local noFogButton = Instance.new("TextButton")
+noFogButton.Size = UDim2.new(1, 0, 0, 25)
+noFogButton.Position = UDim2.new(0, 0, 0, 80)
+noFogButton.Text = "NoClip"
+noFogButton.Parent = menuFrame
+noFogButton.BackgroundColor3=Color3.fromRGB(40,40,40)
+noFogButton.TextColor3 = Color3.fromRGB(0, 255, 0)
+local buttonCorner =Instance.new("UICorner")
+buttonCorner.CornerRadius = UDim.new(0, 10)
+buttonCorner.Parent = noFogButton
 
 -- Functions for hacks (you can paste real code later)
 espButton.MouseButton1Click:Connect(function()
@@ -248,7 +259,7 @@ RunService.RenderStepped:Connect(function(deltaTime)
 	-- Apply Movement
 	local moveVector = (camera.CFrame.LookVector * moveDirection.Z + camera.CFrame.RightVector * moveDirection.X + camera.CFrame.UpVector * moveDirection.Y) * speed * deltaTime
 	camera.CFrame = camera.CFrame + moveVector
-end)	
+end)
 
 end)
 
@@ -256,5 +267,13 @@ noclipButton.MouseButton1Click:Connect(function()
 	print("NoClip Activated!")
 	-- Paste your NoClip code here
 end)
+nofogButton.MouseButton1Click:Connect(function()
+	print("NoClip Activated!")
+	-- Paste your NoClip code here
+local Lighting = game:GetService("Lighting")
 
+-- Remove basic fog
+Lighting.FogEnd = 1000000
+Lighting.FogStart = 0
+end)
 
