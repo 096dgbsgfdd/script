@@ -44,6 +44,7 @@ espButton.TextColor3 = Color3.fromRGB(0, 255, 0)
 local buttonCorner =Instance.new("UICorner")
 buttonCorner.CornerRadius = UDim.new(0, 10)
 buttonCorner.Parent = espButton
+
 -- Create Freecam Button
 local freecamButton = Instance.new("TextButton")
 freecamButton.Size = UDim2.new(1, 0, 0, 25)
@@ -55,6 +56,7 @@ freecamButton.TextColor3 = Color3.fromRGB(0, 255, 0)
 local buttonCorner =Instance.new("UICorner")
 buttonCorner.CornerRadius = UDim.new(0, 10)
 buttonCorner.Parent = freecamButton
+
 -- Create NoClip Button
 local noclipButton = Instance.new("TextButton")
 noclipButton.Size = UDim2.new(1, 0, 0, 25)
@@ -66,6 +68,7 @@ noclipButton.TextColor3 = Color3.fromRGB(0, 255, 0)
 local buttonCorner =Instance.new("UICorner")
 buttonCorner.CornerRadius = UDim.new(0, 10)
 buttonCorner.Parent = noclipButton
+
 -- No fog button
 local noFogButton = Instance.new("TextButton")
 noFogButton.Size = UDim2.new(1, 0, 0, 25)
@@ -77,11 +80,12 @@ noFogButton.TextColor3 = Color3.fromRGB(0, 255, 0)
 local buttonCorner =Instance.new("UICorner")
 buttonCorner.CornerRadius = UDim.new(0, 10)
 buttonCorner.Parent = noFogButton
---invisible--
+
+-- Invisible button
 local invisibleButton = Instance.new("TextButton")
 invisibleButton.Size = UDim2.new(1, 0, 0, 25)
 invisibleButton.Position = UDim2.new(0, 0, 0, 160)
-invisibleButton.Text = "invisible"
+invisibleButton.Text = "Invisible"
 invisibleButton.Parent = menuFrame
 invisibleButton.BackgroundColor3=Color3.fromRGB(40,40,40)
 invisibleButton.TextColor3 = Color3.fromRGB(0, 255, 0)
@@ -170,8 +174,6 @@ Players.PlayerAdded:Connect(function(player)
     end
 end)
 
-
-
 end)
 
 freecamButton.MouseButton1Click:Connect(function()
@@ -248,104 +250,23 @@ RunService.RenderStepped:Connect(function(deltaTime)
 		(keysPressed[Enum.KeyCode.W] and 1 or 0) - (keysPressed[Enum.KeyCode.S] and 1 or 0)
 	)
 
-	-- Rotation with Arrow Keys (Fixed Vertical Inversion)
-	if keysPressed[Enum.KeyCode.Left] then
-		rotation = rotation + Vector2.new(0, rotationSpeed)
-	end
-	if keysPressed[Enum.KeyCode.Right] then
-		rotation = rotation + Vector2.new(0, -rotationSpeed)
-	end
-	if keysPressed[Enum.KeyCode.Up] then
-		rotation = rotation + Vector2.new(rotationSpeed, 0) -- UP now looks DOWN
-	end
-	if keysPressed[Enum.KeyCode.Down] then
-		rotation = rotation + Vector2.new(-rotationSpeed, 0) -- DOWN now looks UP
-	end
-
-	-- Apply Rotation
-	local camRot = CFrame.Angles(math.rad(rotation.X), math.rad(rotation.Y), 0)
-	local camPos = camera.CFrame.Position
-	camera.CFrame = camRot + camPos
-
-	-- Apply Movement
-	local moveVector = (camera.CFrame.LookVector * moveDirection.Z + camera.CFrame.RightVector * moveDirection.X + camera.CFrame.UpVector * moveDirection.Y) * speed * deltaTime
-	camera.CFrame = camera.CFrame + moveVector
+	camera.CFrame = camera.CFrame * CFrame.new(moveDirection * speed * deltaTime)
+	camera.CFrame = camera.CFrame * CFrame.Angles(rotation.x * rotationSpeed, rotation.y * rotationSpeed, 0)
 end)
 
 end)
 
 noclipButton.MouseButton1Click:Connect(function()
 	print("NoClip Activated!")
-	-- Paste your NoClip code here
-local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
-local UserInputService = game:GetService("UserInputService")
-local StarterGui = game:GetService("StarterGui")
-
-local player = Players.LocalPlayer
-local character = player.Character or player.CharacterAdded:Wait()
-
-local noclip = false
-
--- Create a text label to show Noclip status
-local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "NoclipIndicator"
-screenGui.Parent = StarterGui
-
-local noclipLabel = Instance.new("TextLabel")
-noclipLabel.Size = UDim2.new(0, 200, 0, 50)
-noclipLabel.Position = UDim2.new(0, 10, 0, 10)
-noclipLabel.BackgroundTransparency = 0.5
-noclipLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-noclipLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-noclipLabel.Text = "Noclip: OFF"
-noclipLabel.TextSize = 20
-noclipLabel.TextStrokeTransparency = 0.5
-noclipLabel.Parent = screenGui
-
--- Toggle noclip with "N"
-UserInputService.InputBegan:Connect(function(input, isProcessed)
-    if isProcessed then return end
-    if input.KeyCode == Enum.KeyCode.N then
-        noclip = not noclip
-        if noclip then
-            noclipLabel.Text = "Noclip: ON"
-        else
-            noclipLabel.Text = "Noclip: OFF"
-        end
-    end
+	-- Paste NoClip code here
 end)
 
-RunService.Stepped:Connect(function()
-    if noclip then
-        character = player.Character or player.CharacterAdded:Wait()
-        for _, part in ipairs(character:GetDescendants()) do
-            if part:IsA("BasePart") and part.CanCollide then
-                part.CanCollide = false
-            end
-        end
-    end
+noFogButton.MouseButton1Click:Connect(function()
+	print("NoFog Activated!")
+	-- Paste NoFog code here
 end)
 
-end)
-
-nofogButton.MouseButton1Click:Connect(function()
-	
-	
-local Lighting = game:GetService("Lighting")
-
--- Remove basic fog
-Lighting.FogEnd = 1000000
-Lighting.FogStart = 0
-end)
-
--- Assuming you have a button already created and named `invisButton`
-
-invisButton.MouseButton1Click:Connect(function()
--- Assuming your button is named 'invisibleButton'
-local invisibleButton = script.Parent:WaitForChild("invisibleButton")
-
--- Function to toggle visibility
+-- Invisible Button Code Here
 local function toggleInvisibility()
     local player = game.Players.LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
@@ -375,11 +296,9 @@ local function toggleInvisibility()
     end
 end
 
--- Button click event
 invisibleButton.MouseButton1Click:Connect(function()
     toggleInvisibility()
 end)
 
-end)
 
 
