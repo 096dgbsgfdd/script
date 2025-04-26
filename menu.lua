@@ -17,7 +17,7 @@ mainCorner.Parent = mainButton
 
 -- Create Dropdown Frame
 local menuFrame = Instance.new("Frame")
-menuFrame.Size = UDim2.new(0, 250, 0, 150)
+menuFrame.Size = UDim2.new(0, 250, 0, 300)
 menuFrame.Position = UDim2.new(0, 10, 0, 70)
 menuFrame.Visible = false
 menuFrame.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)
@@ -77,7 +77,7 @@ noFogButton.TextColor3 = Color3.fromRGB(0, 255, 0)
 local buttonCorner =Instance.new("UICorner")
 buttonCorner.CornerRadius = UDim.new(0, 10)
 buttonCorner.Parent = noFogButton
-
+--invisible--
 local invisibleButton = Instance.new("TextButton")
 invisibleButton.Size = UDim2.new(1, 0, 0, 25)
 invisibleButton.Position = UDim2.new(0, 0, 0, 160)
