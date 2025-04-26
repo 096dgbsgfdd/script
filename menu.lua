@@ -266,10 +266,60 @@ end)
 noclipButton.MouseButton1Click:Connect(function()
 	print("NoClip Activated!")
 	-- Paste your NoClip code here
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local StarterGui = game:GetService("StarterGui")
+
+local player = Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+
+local noclip = false
+
+-- Create a text label to show Noclip status
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "NoclipIndicator"
+screenGui.Parent = StarterGui
+
+local noclipLabel = Instance.new("TextLabel")
+noclipLabel.Size = UDim2.new(0, 200, 0, 50)
+noclipLabel.Position = UDim2.new(0, 10, 0, 10)
+noclipLabel.BackgroundTransparency = 0.5
+noclipLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+noclipLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+noclipLabel.Text = "Noclip: OFF"
+noclipLabel.TextSize = 20
+noclipLabel.TextStrokeTransparency = 0.5
+noclipLabel.Parent = screenGui
+
+-- Toggle noclip with "N"
+UserInputService.InputBegan:Connect(function(input, isProcessed)
+    if isProcessed then return end
+    if input.KeyCode == Enum.KeyCode.N then
+        noclip = not noclip
+        if noclip then
+            noclipLabel.Text = "Noclip: ON"
+        else
+            noclipLabel.Text = "Noclip: OFF"
+        end
+    end
+end)
+
+RunService.Stepped:Connect(function()
+    if noclip then
+        character = player.Character or player.CharacterAdded:Wait()
+        for _, part in ipairs(character:GetDescendants()) do
+            if part:IsA("BasePart") and part.CanCollide then
+                part.CanCollide = false
+            end
+        end
+    end
+end)
+
 end)
 nofogButton.MouseButton1Click:Connect(function()
 	print("NoClip Activated!")
-	-- Paste your NoClip code here
+	
 local Lighting = game:GetService("Lighting")
 
 -- Remove basic fog
