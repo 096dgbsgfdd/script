@@ -80,7 +80,7 @@ buttonCorner.Parent = noFogButton
 
 local invisibleButton = Instance.new("TextButton")
 invisibleButton.Size = UDim2.new(1, 0, 0, 25)
-invisibleButton.Position = UDim2.new(0, 0, 0, 120)
+invisibleButton.Position = UDim2.new(0, 0, 0, 160)
 invisibleButton.Text = "invisible"
 invisibleButton.Parent = menuFrame
 invisibleButton.BackgroundColor3=Color3.fromRGB(40,40,40)
