@@ -69,8 +69,8 @@ buttonCorner.Parent = noclipButton
 -- No fog button
 local noFogButton = Instance.new("TextButton")
 noFogButton.Size = UDim2.new(1, 0, 0, 25)
-noFogButton.Position = UDim2.new(0, 0, 0, 80)
-noFogButton.Text = "NoClip"
+noFogButton.Position = UDim2.new(0, 0, 0, 100)
+noFogButton.Text = "No fog"
 noFogButton.Parent = menuFrame
 noFogButton.BackgroundColor3=Color3.fromRGB(40,40,40)
 noFogButton.TextColor3 = Color3.fromRGB(0, 255, 0)
