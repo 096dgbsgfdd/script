@@ -328,6 +328,7 @@ RunService.Stepped:Connect(function()
 end)
 
 end)
+
 nofogButton.MouseButton1Click:Connect(function()
 	
 	
@@ -338,67 +339,51 @@ Lighting.FogEnd = 1000000
 Lighting.FogStart = 0
 end)
 
-invisibleButton.MouseButton1Click:Connect(function()
-local player = game.Players.LocalPlayer
-local character = player.Character or player.CharacterAdded:Wait()
-local humanoid = character:WaitForChild("Humanoid")
-local UserInputService = game:GetService("UserInputService")
+-- Assuming you have a button already created and named `invisButton`
 
--- Define the custom key to toggle invisibility
-local toggleKey = Enum.KeyCode.M  -- Change this to the key you prefer
+invisButton.MouseButton1Click:Connect(function()
+    local player = game.Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
 
--- Function to make the character invisible
-local function makeInvisible()
-    for _, part in pairs(character:GetChildren()) do
-        if part:IsA("BasePart") then  -- Make sure it's a physical part of the character
-            part.Transparency = 1  -- Set transparency to 100% (invisible)
-            part.CanCollide = false  -- Disable collisions
-            part.CastShadow = false  -- Disable shadows for the parts
-        end
-    end
-    print("Character is now invisible.")
-end
-
--- Function to make the character visible again
-local function makeVisible()
-    for _, part in pairs(character:GetChildren()) do
-        if part:IsA("BasePart") then
-            part.Transparency = 0  -- Set transparency back to visible (0%)
-            part.CanCollide = true  -- Enable collisions
-            part.CastShadow = true  -- Re-enable shadows
-        end
-    end
-    print("Character is now visible.")
-end
-
--- Check for key press and toggle invisibility
-UserInputService.InputBegan:Connect(function(input, gameProcessed)
-    if gameProcessed then return end  -- Ignore if the game has already processed the input
-
-    if input.KeyCode == toggleKey then
-        -- Toggle between invisible and visible
-        if character and character:FindFirstChild("Humanoid") then
-            local isInvisible = true
-            for _, part in pairs(character:GetChildren()) do
-                if part:IsA("BasePart") and part.Transparency == 0 then
-                    isInvisible = false
-                    break
-                end
-            end
-            if isInvisible then
-                makeVisible()
-            else
-                makeInvisible()
+    -- Function to make the character invisible
+    local function makeInvisible()
+        for _, part in pairs(character:GetChildren()) do
+            if part:IsA("BasePart") then
+                part.Transparency = 1  -- Set transparency to 100% (invisible)
+                part.CanCollide = false  -- Disable collisions
+                part.CastShadow = false  -- Disable shadows for the parts
             end
         end
+        print("Character is now invisible.")
+    end
+
+    -- Function to make the character visible again
+    local function makeVisible()
+        for _, part in pairs(character:GetChildren()) do
+            if part:IsA("BasePart") then
+                part.Transparency = 0  -- Set transparency back to visible (0%)
+                part.CanCollide = true  -- Enable collisions
+                part.CastShadow = true  -- Re-enable shadows
+            end
+        end
+        print("Character is now visible.")
+    end
+
+    -- Toggle invisibility
+    local isInvisible = false  -- Track invisibility state
+    for _, part in pairs(character:GetChildren()) do
+        if part:IsA("BasePart") and part.Transparency == 0 then
+            isInvisible = false
+            break
+        end
+    end
+
+    -- If the character is already invisible, make it visible again, otherwise make it invisible
+    if isInvisible then
+        makeVisible()
+    else
+        makeInvisible()
     end
 end)
 
--- Reset character and humanoid references if the player respawns
-player.CharacterAdded:Connect(function(newCharacter)
-    character = newCharacter
-    humanoid = character:WaitForChild("Humanoid")
-end)
-
-end)
 
