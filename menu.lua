@@ -1,164 +1,149 @@
--- [[ Mobile Hack Menu by ChatGPT ]] --
+-- Create ScreenGui
+local screenGui = Instance.new("ScreenGui")
+screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
-local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
-local UserInputService = game:GetService("UserInputService")
-local LocalPlayer = Players.LocalPlayer
-local Camera = workspace.CurrentCamera
+-- Create Main Button
+local mainButton = Instance.new("TextButton")
+mainButton.Size = UDim2.new(0, 250, 0, 50)
+mainButton.Position = UDim2.new(0, 10, 0, 10)
+mainButton.Text = "Hacks ▼"
+mainButton.Parent = screenGui
+mainButton.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+mainButton.TextColor3 = Color3.fromRGB(0, 255, 0)
 
--- Menu GUI
-local ScreenGui = Instance.new("ScreenGui", LocalPlayer:WaitForChild("PlayerGui"))
-ScreenGui.Name = "HackMenu"
+local mainCorner =Instance.new("UICorner")
+mainCorner.CornerRadius = UDim.new(0, 10)
+mainCorner.Parent = mainButton
 
-local UIListLayout = Instance.new("UIListLayout")
-UIListLayout.Parent = ScreenGui
-UIListLayout.FillDirection = Enum.FillDirection.Vertical
-UIListLayout.Padding = UDim.new(0, 10)
+-- Create Dropdown Frame
+local menuFrame = Instance.new("Frame")
+menuFrame.Size = UDim2.new(0, 250, 0, 150)
+menuFrame.Position = UDim2.new(0, 10, 0, 70)
+menuFrame.Visible = false
+menuFrame.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)
+menuFrame.Parent = screenGui
+menuFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 
-local function createButton(text)
-	local button = Instance.new("TextButton")
-	button.Size = UDim2.new(0, 200, 0, 50)
-	button.Position = UDim2.new(0, 20, 0, 20)
-	button.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-	button.TextColor3 = Color3.new(1, 1, 1)
-	button.TextSize = 20
-	button.Text = text
-	button.Parent = ScreenGui
-	return button
-end
+local mainCorner =Instance.new("UICorner")
+mainCorner.CornerRadius = UDim.new(0, 10)
+mainCorner.Parent = menuFrame
 
--- Variables
-local espEnabled = false
-local freecamEnabled = false
-local noclipEnabled = false
-local connections = {}
-local freecamControls = {}
-local moveDirection = Vector3.new()
-local moveSpeed = 3
-local sensitivity = 0.5
-local rotation = Vector2.new()
-local holdingPhase = false
-
--- ESP Function
-local function createESP(player)
-	if player.Character then
-		local highlight = Instance.new("Highlight")
-		highlight.Name = "ESPHighlight"
-		highlight.FillColor = Color3.new(1, 0, 0)
-		highlight.OutlineColor = Color3.new(1, 1, 1)
-		highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-		highlight.Parent = player.Character
-	end
-end
-
-local function updateESP()
-	for _, player in pairs(Players:GetPlayers()) do
-		if player ~= LocalPlayer then
-			if not player.Character then continue end
-			if not player.Character:FindFirstChild("ESPHighlight") then
-				createESP(player)
-			end
-		end
-	end
-end
-
--- Freecam Controls
-local function createMovementButtons()
-	local directions = {
-		{"Forward", Vector3.new(0, 0, -1)},
-		{"Back", Vector3.new(0, 0, 1)},
-		{"Left", Vector3.new(-1, 0, 0)},
-		{"Right", Vector3.new(1, 0, 0)},
-		{"Up", Vector3.new(0, 1, 0)},
-		{"Down", Vector3.new(0, -1, 0)}
-	}
-	for i, data in ipairs(directions) do
-		local btn = createButton(data[1])
-		btn.Position = UDim2.new(0, 20, 0, 60 + (i*60))
-		btn.Visible = false
-		btn.MouseButton1Down:Connect(function()
-			moveDirection = data[2]
-		end)
-		btn.MouseButton1Up:Connect(function()
-			moveDirection = Vector3.new()
-		end)
-		table.insert(freecamControls, btn)
-	end
-end
-
--- Freecam Logic
-RunService.RenderStepped:Connect(function(dt)
-	if freecamEnabled then
-		local move = moveDirection * moveSpeed * dt
-		local camCF = Camera.CFrame
-		local newCF = camCF + (camCF.RightVector * move.X) + (camCF.UpVector * move.Y) + (camCF.LookVector * move.Z)
-		Camera.CFrame = newCF
-	end
+-- Toggle Menu
+mainButton.MouseButton1Click:Connect(function()
+	menuFrame.Visible = not menuFrame.Visible
 end)
 
--- Noclip Logic
-RunService.Stepped:Connect(function()
-	if noclipEnabled and holdingPhase and LocalPlayer.Character then
-		for _, part in pairs(LocalPlayer.Character:GetDescendants()) do
-			if part:IsA("BasePart") then
-				part.CanCollide = false
-			end
-		end
-	end
-end)
+-- Create ESP Button
+local espButton = Instance.new("TextButton")
+espButton.Size = UDim2.new(1, 0, 0, 25)
+espButton.Position = UDim2.new(0, 0 , 0, 0)
+espButton.Text = "ESP"
+espButton.Parent = menuFrame
+espButton.BackgroundColor3=Color3.fromRGB(40,40,40)
+espButton.TextColor3 = Color3.fromRGB(0, 255, 0)
+local buttonCorner =Instance.new("UICorner")
+buttonCorner.CornerRadius = UDim.new(0, 10)
+buttonCorner.Parent = espButton
+-- Create Freecam Button
+local freecamButton = Instance.new("TextButton")
+freecamButton.Size = UDim2.new(1, 0, 0, 25)
+freecamButton.Position = UDim2.new(0, 0, 0, 40)
+freecamButton.Text = "Freecam"
+freecamButton.Parent = menuFrame
+freecamButton.BackgroundColor3=Color3.fromRGB(40,40,40)
+freecamButton.TextColor3 = Color3.fromRGB(0, 255, 0)
+local buttonCorner =Instance.new("UICorner")
+buttonCorner.CornerRadius = UDim.new(0, 10)
+buttonCorner.Parent = freecamButton
+-- Create NoClip Button
+local noclipButton = Instance.new("TextButton")
+noclipButton.Size = UDim2.new(1, 0, 0, 25)
+noclipButton.Position = UDim2.new(0, 0, 0, 80)
+noclipButton.Text = "NoClip"
+noclipButton.Parent = menuFrame
+noclipButton.BackgroundColor3=Color3.fromRGB(40,40,40)
+noclipButton.TextColor3 = Color3.fromRGB(0, 255, 0)
+local buttonCorner =Instance.new("UICorner")
+buttonCorner.CornerRadius = UDim.new(0, 10)
+buttonCorner.Parent = noclipButton
 
--- Buttons
-local espButton = createButton("Toggle ESP")
+-- Functions for hacks (you can paste real code later)
 espButton.MouseButton1Click:Connect(function()
-	espEnabled = not espEnabled
-	if espEnabled then
-		table.insert(connections, RunService.RenderStepped:Connect(updateESP))
-	else
-		for _, plr in pairs(Players:GetPlayers()) do
-			if plr.Character and plr.Character:FindFirstChild("ESPHighlight") then
-				plr.Character:FindFirstChild("ESPHighlight"):Destroy()
+	-- ESP Script for Roblox (with the Hack Menu intact)
+	local Players = game:GetService("Players")
+	local Camera = game:GetService("Workspace").CurrentCamera
+	local LocalPlayer = game.Players.LocalPlayer
+
+
+	-- Function to create ESP box around a player
+	local function createESP(player)
+		local espBox = Instance.new("Frame")
+		espBox.Size = UDim2.new(0, 200, 0, 50)
+		espBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		espBox.BackgroundTransparency = 0.5
+		espBox.BorderSizePixel = 0
+		espBox.AnchorPoint = Vector2.new(0.5, 0.5)
+		espBox.Visible = true
+		espBox.Parent = menuGui:WaitForChild("HackMenu"):WaitForChild("ScreenGui")
+
+		-- Create text label for the player's name
+		local textLabel = Instance.new("TextLabel")
+		textLabel.Size = UDim2.new(1, 0, 1, 0)
+		textLabel.BackgroundTransparency = 1
+		textLabel.Text = player.Name
+		textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+		textLabel.TextSize = 20
+		textLabel.Parent = espBox
+
+		-- Update ESP box position to follow player
+		game:GetService("RunService").RenderStepped:Connect(function()
+			if player.Character and player.Character:FindFirstChild("Head") then
+				local playerPosition = player.Character.Head.Position
+				local screenPosition, onScreen = Camera:WorldToScreenPoint(playerPosition)
+				if onScreen then
+					espBox.Position = UDim2.new(0, screenPosition.X, 0, screenPosition.Y)
+				else
+					espBox.Position = UDim2.new(0, -1000, 0, -1000)  -- Move off-screen if the player is out of view
+				end
 			end
+		end)
+
+		-- Update ESP box text to show distance
+		game:GetService("RunService").RenderStepped:Connect(function()
+			if player.Character and player.Character:FindFirstChild("Head") then
+				local playerPosition = player.Character.Head.Position
+				local distance = math.round((playerPosition - LocalPlayer.Character.HumanoidRootPart.Position).magnitude)
+				textLabel.Text = player.Name .. " - " .. distance .. "m"
+			end
+		end)
+	end
+
+	-- Loop through all players and create ESP
+	Players.PlayerAdded:Connect(function(player)
+		if player ~= game.Players.LocalPlayer then
+			createESP(player)
 		end
-		for _, conn in pairs(connections) do conn:Disconnect() end
-		connections = {}
+	end)
+
+	-- Create ESP for existing players
+	for _, player in ipairs(Players:GetPlayers()) do
+		if player ~= game.Players.LocalPlayer then
+			createESP(player)
+		end
 	end
+
+
+
 end)
 
-local freecamButton = createButton("Toggle Freecam")
 freecamButton.MouseButton1Click:Connect(function()
-	freecamEnabled = not freecamEnabled
-	Camera.CameraType = freecamEnabled and Enum.CameraType.Scriptable or Enum.CameraType.Custom
-	for _, btn in pairs(freecamControls) do
-		btn.Visible = freecamEnabled
-	end
+	print("Freecam Activated!")
+	-- Paste your Freecam code here
 end)
 
-local noclipButton = createButton("Toggle Noclip")
 noclipButton.MouseButton1Click:Connect(function()
-	noclipEnabled = not noclipEnabled
+	print("NoClip Activated!")
+	-- Paste your NoClip code here
 end)
 
-local phaseButton = createButton("Phase (Hold)")
-phaseButton.MouseButton1Down:Connect(function()
-	holdingPhase = true
-end)
-phaseButton.MouseButton1Up:Connect(function()
-	holdingPhase = false
-end)
 
-local resetButton = createButton("Reset Camera")
-resetButton.MouseButton1Click:Connect(function()
-	freecamEnabled = false
-	noclipEnabled = false
-	holdingPhase = false
-	Camera.CameraType = Enum.CameraType.Custom
-	moveDirection = Vector3.new()
-	for _, btn in pairs(freecamControls) do
-		btn.Visible = false
-	end
-end)
-
-createMovementButtons()
-
--- Final UI setup
-ScreenGui.ResetOnSpawn = false
