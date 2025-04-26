@@ -155,6 +155,101 @@ end)
 freecamButton.MouseButton1Click:Connect(function()
 	print("Freecam Activated!")
 	-- Paste your Freecam code here
+-- Freecam for PC (Fixed W/S + Proper Arrow Look Inversion)
+
+-- Services
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+
+-- Variables
+local player = Players.LocalPlayer
+local camera = workspace.CurrentCamera
+
+local speed = 50
+local sensitivity = 0.25
+local rotationSpeed = 1.5
+local moveDirection = Vector3.zero
+local rotation = Vector2.zero
+local freecamActive = true
+
+-- Save original camera settings
+local originalCameraType = camera.CameraType
+
+-- Activate Freecam
+camera.CameraType = Enum.CameraType.Scriptable
+camera.CFrame = player.Character and player.Character:FindFirstChild("Head") and player.Character.Head.CFrame or CFrame.new(0, 10, 0)
+
+-- Key Presses
+local keysPressed = {}
+
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+	if gameProcessed then return end
+	keysPressed[input.KeyCode] = true
+end)
+
+UserInputService.InputEnded:Connect(function(input)
+	keysPressed[input.KeyCode] = false
+end)
+
+-- Mouse Movement
+UserInputService.InputChanged:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseMovement then
+		rotation += Vector2.new(-input.Delta.y, -input.Delta.x) * (sensitivity / 10)
+	end
+end)
+
+-- GUI Button to Return Camera
+local screenGui = Instance.new("ScreenGui")
+screenGui.Parent = player:WaitForChild("PlayerGui")
+
+local returnButton = Instance.new("TextButton")
+returnButton.Size = UDim2.new(0, 120, 0, 40)
+returnButton.Position = UDim2.new(0, 10, 0, 10)
+returnButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
+returnButton.Text = "Return Camera"
+returnButton.Parent = screenGui
+
+returnButton.MouseButton1Click:Connect(function()
+	freecamActive = false
+	camera.CameraType = originalCameraType
+	screenGui:Destroy()
+end)
+
+-- Update Loop
+RunService.RenderStepped:Connect(function(deltaTime)
+	if not freecamActive then return end
+
+	moveDirection = Vector3.new(
+		(keysPressed[Enum.KeyCode.D] and 1 or 0) - (keysPressed[Enum.KeyCode.A] and 1 or 0),
+		(keysPressed[Enum.KeyCode.E] and 1 or 0) - (keysPressed[Enum.KeyCode.Q] and 1 or 0),
+		(keysPressed[Enum.KeyCode.W] and 1 or 0) - (keysPressed[Enum.KeyCode.S] and 1 or 0)
+	)
+
+	-- Rotation with Arrow Keys (Fixed Vertical Inversion)
+	if keysPressed[Enum.KeyCode.Left] then
+		rotation = rotation + Vector2.new(0, rotationSpeed)
+	end
+	if keysPressed[Enum.KeyCode.Right] then
+		rotation = rotation + Vector2.new(0, -rotationSpeed)
+	end
+	if keysPressed[Enum.KeyCode.Up] then
+		rotation = rotation + Vector2.new(rotationSpeed, 0) -- UP now looks DOWN
+	end
+	if keysPressed[Enum.KeyCode.Down] then
+		rotation = rotation + Vector2.new(-rotationSpeed, 0) -- DOWN now looks UP
+	end
+
+	-- Apply Rotation
+	local camRot = CFrame.Angles(math.rad(rotation.X), math.rad(rotation.Y), 0)
+	local camPos = camera.CFrame.Position
+	camera.CFrame = camRot + camPos
+
+	-- Apply Movement
+	local moveVector = (camera.CFrame.LookVector * moveDirection.Z + camera.CFrame.RightVector * moveDirection.X + camera.CFrame.UpVector * moveDirection.Y) * speed * deltaTime
+	camera.CFrame = camera.CFrame + moveVector
+end)	
+
 end)
 
 noclipButton.MouseButton1Click:Connect(function()
